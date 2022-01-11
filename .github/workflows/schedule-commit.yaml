@@ -73,19 +73,19 @@ jobs:
         uses: dawidd6/action-send-mail@v3
         with:
           # Required mail server address:
-          server_address: smtp.gmail.com
+          server_address: mail.hover.com
           # Required mail server port:
           server_port: 465
           # Optional (recommended): mail server username:
-          username: ${{secrets.GMAIL_USERNAME}}
+          username: ${{secrets.BLD_USERNAME}}
           # Optional (recommended) mail server password:
-          password: ${{secrets.GMAIL_PASSWORD}}
+          password: ${{secrets.BLD_PASSWORD}}
           # Required mail subject:
           subject: Github Actions job result
           # Required recipients' addresses:
           to: john.d.johnson@marquette.edu
           # Required sender full name (address can be skipped):
-          from: jdjohn215@gmail.com # <user@example.com>
+          from: John Johnson # <user@example.com>
           # Optional plain body:
           body: Build job of ${{github.repository}} completed successfully!
     
