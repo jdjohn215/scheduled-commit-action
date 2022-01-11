@@ -89,4 +89,6 @@ jobs:
           from: John Johnson # <user@example.com>
           # Optional plain body:
           body: Build job of ${{github.repository}} completed successfully!
+          # Optional attachments:
+          attachments: data-raw/updated_data.Rda
     
