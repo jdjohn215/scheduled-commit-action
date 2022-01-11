@@ -84,11 +84,11 @@ jobs:
           # Required mail subject:
           subject: Github Actions job result
           # Required recipients' addresses:
-          to: jdjohn215@gmail.com, matt@biglakedata.com
+          to: jdjohn215@gmail.com
           # Required sender full name (address can be skipped):
           from: John Johnson # <user@example.com>
           # Optional plain body:
           body: Build job of ${{github.repository}} completed successfully!
           # Optional attachments:
-          attachments: data-raw/updated_data.Rda
+          attachments: .dist/data-raw/updated_data.Rda
     
