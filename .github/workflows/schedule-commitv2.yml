@@ -19,8 +19,8 @@ jobs:
         run:  Rscript -e 'rmarkdown::render("Reports/Wisconsin.Rmd", output_format = "html_document")'
       - name: Commit results
         run:  |
-          git commit Reports/Wisconsin.Rmd -m 'Re-build Wisconsin.Rmd' || echo "No changes to commit"
-          git push origin || echo "No changes to commit"
+          git commit Reports/Wisconsin.Rmd -m 'Re-build Wisconsin.Rmd'
+          git push origin
       - name: Send mail
         uses: dawidd6/action-send-mail@v3
         with:
@@ -41,5 +41,5 @@ jobs:
           # Optional plain body:
           body: Build job of ${{github.repository}} completed successfully!
           # Optional attachments:
-          attachments: updated_data.csv
+          attachments: updated_data.csv, Reports/Wisconsin.html
     
