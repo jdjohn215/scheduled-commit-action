@@ -34,7 +34,7 @@ jobs:
         run: |
           install.packages('remotes')
           install.packages('sessioninfo')
-          remotes::install_github("jdjohn215/WisconsinCOVID19Reports", auth_token = "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")
+          remotes::install_github("jdjohn215/WisconsinCOVID19Reports", auth_token = ${{secrets.WI_COVID19_Reports_PAT}})
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
           writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
         shell: Rscript {0}
