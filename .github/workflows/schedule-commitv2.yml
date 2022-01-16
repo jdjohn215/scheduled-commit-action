@@ -16,7 +16,7 @@ jobs:
       - name: Install rmarkdown
         run:  Rscript -e 'install.packages(c("rmarkdown", "tidyverse", "jsonlite"))'
       - name: Render Wisconsin
-        run:  Rscript -e 'rmarkdown:render("Reports/Wisconsin.Rmd", output_format = "html_document")'
+        run:  Rscript -e 'rmarkdown::render("Reports/Wisconsin.Rmd", output_format = "html_document")'
       - name: Commit results
         run:  |
           git commit Reports/Wisconsin.Rmd -m 'Re-build Wisconsin.Rmd' || echo "No changes to commit"
