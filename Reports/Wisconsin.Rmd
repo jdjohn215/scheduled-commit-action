@@ -7,10 +7,22 @@ output: html_document
 knitr::opts_chunk$set(echo = FALSE,
                       warning = FALSE,
                       message = FALSE)
-library(WisconsinCOVID19Reports)
+library(tidyverse)
+library(jsonlite)
 
-covid <- construct_url("Wisconsin", var_subset = standard.variables) %>%
-  fetch_covid_data()
+covid <- fromJSON("https://dhsgis.wi.gov/server/rest/services/DHS_COVID19/COVID19_WI_V2/MapServer/11/query?where=1%3D1&outFields=RptDt,GEOID,GEOName,POS_NEW_CP,TESTS_NEW,POS_7DAYAVG_CP,TESTS_7DAYAVG,HOSP_YES_CP,POS_0_9_CP,POS_10_19_CP&returnGeometry=false&outSR=4326&f=json")
+covid <- covid$features$attributes %>%
+    tibble::tibble() %>%
+      dplyr::mutate(RptDt = as.Date(as.POSIXct(RptDt/1000, origin = "1970-01-01"))) %>%
+      dplyr::mutate(positivity_rate = (POS_NEW_CP/TESTS_NEW)*100,
+                    positivity_rate_7day = (POS_7DAYAVG_CP/TESTS_7DAYAVG)*100) %>%
+      dplyr::arrange(RptDt) %>%
+      dplyr::mutate(new_hosp = HOSP_YES_CP - lag(HOSP_YES_CP, 1),
+                    hosp_7day_avg = zoo::rollmean(new_hosp, align = "right", k = 7, fill = NA)) %>%
+      dplyr::mutate(new_pos_0_9_cp = POS_0_9_CP - lag(POS_0_9_CP, 1),
+                    new_pos_10_19_cp = POS_10_19_CP - lag(POS_10_19_CP, 1),
+                    pos_0_9_cp_7day_avg = zoo::rollmean(new_pos_0_9_cp, align = "right", k = 7, fill = NA),
+                    pos_10_19_cp_7day_avg = zoo::rollmean(new_pos_10_19_cp, align = "right", k = 7, fill = NA))
 most.recent <- max(covid$RptDt)
 day.of.week <- lubridate::wday(most.recent)
 ```
