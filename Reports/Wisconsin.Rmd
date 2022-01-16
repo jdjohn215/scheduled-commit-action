@@ -1,0 +1,97 @@
+---
+title: "Wisconsin report"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(WisconsinCOVID19Reports)
+
+covid <- construct_url("Wisconsin", var_subset = standard.variables) %>%
+  fetch_covid_data()
+most.recent <- max(covid$RptDt)
+day.of.week <- lubridate::wday(most.recent)
+```
+
+
+```{r}
+covid %>%
+  dplyr::filter(RptDt >= as.Date("2021-12-01")) %>%
+  ggplot(aes(RptDt, POS_7DAYAVG_CP)) +
+  geom_line(color = "gray50", size = 1.2) +
+  geom_point(data = function(x){dplyr::filter(x, RptDt == most.recent)},
+             col = "firebrick", size = 2) +
+  ggrepel::geom_label_repel(data = function(x){dplyr::filter(x, RptDt == most.recent)},
+                            aes(label = prettyNum(POS_7DAYAVG_CP, ",")),
+                            alpha = 0.75) +
+  labs(title = "Wisconsin, 7-day average of COVID-19 cases",
+       subtitle = paste("2021-12-01 through", most.recent),
+       caption = "data source: WI DHS",
+       x = "reported date",
+       y = "7-day average") +
+  scale_y_continuous(labels = scales::number_format(big.mark = ",")) +
+  covid_theme()
+```
+
+```{r}
+covid %>%
+  ggplot(aes(RptDt, POS_7DAYAVG_CP)) +
+  geom_col(color = "gray50") +
+  geom_point(data = function(x){dplyr::filter(x, RptDt == most.recent)},
+             color = "firebrick") +
+  ggrepel::geom_label_repel(data = function(x){dplyr::filter(x, RptDt == most.recent)},
+                            aes(label = prettyNum(POS_7DAYAVG_CP, ",")),
+                            alpha = 0.75) +
+  labs(title = "Wisconsin, 7-day average of COVID-19 cases",
+       subtitle = paste("through", most.recent),
+       caption = "data source: WI DHS",
+       x = "reported date",
+       y = "7-day average") +
+  scale_y_continuous(labels = scales::number_format(big.mark = ",")) +
+  covid_theme()
+```
+
+```{r}
+covid %>%
+  dplyr::filter(RptDt >= as.Date("2021-12-01")) %>%
+  ggplot(aes(RptDt, POS_NEW_CP)) +
+  geom_line(aes(linetype = "daily"), color = "gray50", size = 1.2) +
+  geom_line(aes(RptDt, POS_7DAYAVG_CP, linetype = "7-day avg"),
+            color = "gray50", size = 1.2) +
+  geom_point(data = function(x){dplyr::filter(x, lubridate::wday(RptDt) == day.of.week)},
+             aes(color = lubridate::wday(day.of.week, label = T, abbr = F)),
+             size = 2) +
+  geom_point(data = function(x){dplyr::filter(x, RptDt == most.recent)},
+             col = "firebrick", size = 2) +
+  ggrepel::geom_label_repel(data = function(x){dplyr::filter(x, RptDt == most.recent)},
+                            aes(label = prettyNum(POS_NEW_CP, ",")),
+                            alpha = 0.75) +
+  labs(title = "Wisconsin, total COVID-19 cases",
+       subtitle = paste("2021-12-01 through", most.recent),
+       caption = "data source: WI DHS",
+       x = "reported date",
+       y = "cases",
+       color = NULL, linetype = NULL) +
+  scale_y_continuous(labels = scales::number_format(big.mark = ",")) +
+  covid_theme() +
+  theme(legend.position = "top")
+```
+
+```{r}
+covid %>%
+  dplyr::select(RptDt, POS_NEW_CP) %>%
+  dplyr::mutate(burden = zoo::rollsum(POS_NEW_CP, k = 14, fill = NA, align = "right"),
+         burden_rate = ((burden/5983718))*100000) %>%
+  ggplot(aes(RptDt, burden_rate)) +
+  geom_line() +
+  labs(title = paste("Wisconsin, COVID-19 burden rate through", most.recent),
+       subtitle = "the burden rate is the total number of cases in the past 14 days per 100k population",
+       caption = "data source: WI DHS",
+       x = "reported date",
+       y = "cases",
+       color = NULL, linetype = NULL) +
+  scale_y_continuous(labels = scales::number_format(big.mark = ",")) +
+  covid_theme()
+```
+
