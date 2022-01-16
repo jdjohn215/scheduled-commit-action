@@ -34,6 +34,7 @@ jobs:
         run: |
           install.packages('remotes')
           install.packages('sessioninfo')
+          remotes::install_github("jdjohn215/WisconsinCOVID19Reports", auth_token = "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")
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
           writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
         shell: Rscript {0}
@@ -54,6 +55,12 @@ jobs:
         run: |
           source("R/job.R")
         shell: Rscript {0} 
+        
+      - name: Render document
+        uses: happyRip/rmarkdown-action@v1.1
+        with:
+          input_file: Reports/Wisconsin.Rmd
+          output_format: html_document
         
       - name: Commit files
         run: |
