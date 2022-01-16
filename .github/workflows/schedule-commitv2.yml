@@ -16,7 +16,7 @@ jobs:
       - name: Install rmarkdown
         run:  Rscript -e 'install.packages(c("rmarkdown", "tidyverse", "jsonlite", "zoo", "lubridate", "ggrepel"))'
       - name: Render Wisconsin
-        run:  Rscript -e 'rmarkdown::render("Reports/Wisconsin.Rmd", output_format = "html_document")'
+        run:  Rscript -e 'rmarkdown::render("Wisconsin.Rmd", output_format = "html_document")'
       - name: Commit files
         run: |
           git config --local user.email "actions@github.com"
@@ -44,5 +44,5 @@ jobs:
           # Optional plain body:
           body: Build job of ${{github.repository}} completed successfully!
           # Optional attachments:
-          attachments: updated_data.csv, Reports/Wisconsin.html
+          attachments: Wisconsin.html
     
