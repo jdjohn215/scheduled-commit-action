@@ -25,6 +25,16 @@ covid <- covid$features$attributes %>%
                     pos_10_19_cp_7day_avg = zoo::rollmean(new_pos_10_19_cp, align = "right", k = 7, fill = NA))
 most.recent <- max(covid$RptDt)
 day.of.week <- lubridate::wday(most.recent)
+
+covid_theme <- function(){
+  theme_minimal() +
+    theme(plot.title.position = "plot",
+          plot.title = element_text(size = 14, face = "bold"),
+          plot.subtitle = element_text(face = "italic"),
+          plot.background = element_rect(fill = "whitesmoke", colour = "white"),
+          panel.background = element_rect(fill = "linen", colour = "linen"),
+          panel.grid = element_line(colour = "white"))
+}
 ```
 
 
